@@ -1,0 +1,72 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    const int MAX_WRONG = 6; // maximum number of incorrect guesses allowed
+    vector<string> words; // list of words to choose from
+    words.push_back("PROGRAMMING");
+    words.push_back("COMPUTER");
+    words.push_back("ALGORITHM");
+    words.push_back("CODING");
+    words.push_back("DATABASE");
+    words.push_back("PYTHON");
+    words.push_back("JAVA");
+    words.push_back("CPLUSPLUS");
+    words.push_back("BINARY");
+    words.push_back("ARRAY");
+
+    srand(time(NULL)); // seed the random number generator with the current time
+    int wordIndex = rand() % words.size(); // choose a random word from the list
+    string secretWord = words[wordIndex]; // the word to be guessed
+    int wrongGuesses = 0; // number of incorrect guesses made by the player
+    string guessedLetters = ""; // list of letters guessed by the player
+    string maskedWord(secretWord.size(), '-'); // the word with masked letters that haven't been guessed
+
+    cout << "Welcome to Hangman!" << endl;
+
+    do {
+        cout << "Word: " << maskedWord << endl;
+        cout << "Guessed letters: " << guessedLetters << endl;
+        cout << "Guess a letter: ";
+        char guess;
+        cin >> guess;
+
+        // check if the player has already guessed the letter
+        if (guessedLetters.find(guess) != string::npos) {
+            cout << "You already guessed that letter. Please try again." << endl;
+            continue;
+        }
+
+        guessedLetters += guess;
+
+        // check if the guessed letter is in the secret word
+        if (secretWord.find(guess) != string::npos) {
+            cout << "Correct! The letter " << guess << " is in the word." << endl;
+
+            // reveal the guessed letter in the masked word
+            for (int i = 0; i < secretWord.size(); i++) {
+                if (secretWord[i] == guess) {
+                    maskedWord[i] = guess;
+                }
+            }
+        } else {
+            cout << "Sorry, the letter " << guess << " is not in the word." << endl;
+            wrongGuesses++;
+
+            // check if the player has used up all their guesses
+            if (wrongGuesses == MAX_WRONG) {
+                cout << "You lose! The word was " << secretWord << "." << endl;
+                return 0;
+            }
+        }
+    } while (maskedWord != secretWord);
+
+    cout << "Congratulations! You guessed the word " << secretWord << " in " << guessedLetters.size() << " tries." << endl;
+
+    return 0;
+}
