@@ -1,0 +1,99 @@
+                    'W':
+                    if (dir != Direction::Down) {
+                        dir = Direction::Up;
+                    }
+                    break;
+                case 's':
+                case 'S':
+                    if (dir != Direction::Up) {
+                        dir = Direction::Down;
+                    }
+                    break;
+                case 'a':
+                case 'A':
+                    if (dir != Direction::Right) {
+                        dir = Direction::Left;
+                    }
+                    break;
+                case 'd':
+                case 'D':
+                    if (dir != Direction::Left) {
+                        dir = Direction::Right;
+                    }
+                    break;
+            }
+        }
+
+        if (delay <= 0) {
+            SnakeSegment head = snake.front();
+            switch (dir) {
+                case Direction::Up:
+                    head.row--;
+                    break;
+                case Direction::Down:
+                    head.row++;
+                    break;
+                case Direction::Left:
+                    head.col--;
+                    break;
+                case Direction::Right:
+                    head.col++;
+                    break;
+            }
+            snake.push_front(head);
+
+            if (grid[head.row][head.col] == 1) {
+                grid[head.row][head.col] = 0;
+                placeFood(grid, food);
+                delay = max(delay - 10, MAX_DELAY);
+            } else {
+                snake.pop_back();
+            }
+
+            gameOver = isCollision(snake, dir);
+
+            system("clear"); // clear screen
+
+            for (int row = 0; row < NUM_ROWS; row++) {
+                for (int col = 0; col < NUM_COLS; col++) {
+                    if (grid[row][col] == 1) {
+                        cout << "*";
+                    } else if (row == head.row && col == head.col) {
+                        cout << "O";
+                    } else if (grid[row][col] == -1) {
+                        cout << "X";
+                    } else {
+                        bool isBody = false;
+                        for (auto segment : snake) {
+                            if (segment.row == row && segment.col == col) {
+                                cout << "o";
+                                isBody = true;
+                                break;
+                            }
+                        }
+                        if (!isBody) {
+                            cout << " ";
+                        }
+                    }
+                }
+                cout << endl;
+            }
+
+            cout << "Score: " << snake.size() - SNAKE_LENGTH << endl;
+
+            // delay based on snake's length
+            delay -= max(10 * (int) snake.size() / SNAKE_LENGTH, 1);
+        } else {
+            delay--;
+        }
+
+        this_thread::sleep_for(chrono::milliseconds(10)); // 10ms delay
+    }
+
+    // restore terminal settings
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+
+    cout << "Game over! Score: " << snake.size() - SNAKE_LENGTH << endl;
+
+    return 0;
+}
