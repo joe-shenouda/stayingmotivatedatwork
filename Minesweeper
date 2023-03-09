@@ -1,0 +1,128 @@
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+const int ROWS = 8;
+const int COLS = 8;
+const int NUM_MINES = 10;
+
+void initializeBoard(char board[][COLS]) {
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            board[i][j] = '-';
+        }
+    }
+}
+
+void printBoard(char board[][COLS]) {
+    cout << "  ";
+    for (int j = 0; j < COLS; j++) {
+        cout << j << " ";
+    }
+    cout << endl;
+
+    for (int i = 0; i < ROWS; i++) {
+        cout << i << " ";
+        for (int j = 0; j < COLS; j++) {
+            cout << board[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+void placeMines(char board[][COLS]) {
+    srand(static_cast<unsigned int>(time(0)));
+
+    int numMines = 0;
+    while (numMines < NUM_MINES) {
+        int row = rand() % ROWS;
+        int col = rand() % COLS;
+        if (board[row][col] != '*') {
+            board[row][col] = '*';
+            numMines++;
+        }
+    }
+}
+
+bool isValid(int row, int col) {
+    return (row >= 0 && row < ROWS && col >= 0 && col < COLS);
+}
+
+int countAdjacentMines(char board[][COLS], int row, int col) {
+    int count = 0;
+    for (int i = row - 1; i <= row + 1; i++) {
+        for (int j = col - 1; j <= col + 1; j++) {
+            if (isValid(i, j) && board[i][j] == '*') {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+bool hasWon(char board[][COLS]) {
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            if (board[i][j] == '-' || board[i][j] == '*') {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void reveal(char board[][COLS], bool revealed[][COLS], int row, int col) {
+    if (isValid(row, col) && !revealed[row][col]) {
+        revealed[row][col] = true;
+
+        if (board[row][col] == '-') {
+            int numMines = countAdjacentMines(board, row, col);
+            if (numMines == 0) {
+                board[row][col] = ' ';
+                for (int i = row - 1; i <= row + 1; i++) {
+                    for (int j = col - 1; j <= col + 1; j++) {
+                        reveal(board, revealed, i, j);
+                    }
+                }
+            } else {
+                board[row][col] = numMines + '0';
+            }
+        }
+    }
+}
+
+int main() {
+    char board[ROWS][COLS];
+    initializeBoard(board);
+
+    bool revealed[ROWS][COLS] = {false};
+
+    placeMines(board);
+
+    printBoard(board);
+    
+        while (true) {
+        int row, col;
+        cout << "Enter row and column: ";
+        cin >> row >> col;
+
+        if (board[row][col] == '*') {
+            cout << "You hit a mine! Game over." << endl;
+            break;
+        }
+
+        reveal(board, revealed, row, col);
+        printBoard(board);
+
+        if (hasWon(board)) {
+            cout << "Congratulations, you won!" << endl;
+            break;
+        }
+    }
+
+    return 0;
+}
+
