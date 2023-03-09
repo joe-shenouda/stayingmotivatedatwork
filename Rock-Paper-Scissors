@@ -1,0 +1,55 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+int main() {
+    srand(time(NULL)); // seed the random number generator with the current time
+    int computerChoice = rand() % 3; // generate a random number between 0 and 2
+    int playerChoice;
+
+    cout << "Welcome to Rock-Paper-Scissors!" << endl;
+    cout << "0 = Rock, 1 = Paper, 2 = Scissors" << endl;
+
+    cout << "Enter your choice: ";
+    cin >> playerChoice;
+
+    switch (playerChoice) {
+        case 0: // player chooses Rock
+            if (computerChoice == 0) {
+                cout << "It's a tie! Both chose Rock." << endl;
+            } else if (computerChoice == 1) {
+                cout << "Computer wins! Paper covers Rock." << endl;
+            } else {
+                cout << "You win! Rock smashes Scissors." << endl;
+            }
+            break;
+
+        case 1: // player chooses Paper
+            if (computerChoice == 0) {
+                cout << "You win! Paper covers Rock." << endl;
+            } else if (computerChoice == 1) {
+                cout << "It's a tie! Both chose Paper." << endl;
+            } else {
+                cout << "Computer wins! Scissors cut Paper." << endl;
+            }
+            break;
+
+        case 2: // player chooses Scissors
+            if (computerChoice == 0) {
+                cout << "Computer wins! Rock smashes Scissors." << endl;
+            } else if (computerChoice == 1) {
+                cout << "You win! Scissors cut Paper." << endl;
+            } else {
+                cout << "It's a tie! Both chose Scissors." << endl;
+            }
+            break;
+
+        default: // player enters an invalid choice
+            cout << "Invalid choice. Please enter 0 for Rock, 1 for Paper, or 2 for Scissors." << endl;
+            break;
+    }
+
+    return 0;
+}
