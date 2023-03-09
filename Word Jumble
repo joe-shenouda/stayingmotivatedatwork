@@ -1,0 +1,45 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    // set up the game
+    srand(static_cast<unsigned int>(time(0)));
+
+    const int MAX_GUESSES = 3; // maximum number of guesses allowed
+
+    string words[] = {"JUMBLE", "PUZZLE", "CRICKET", "COMPUTER", "PROGRAM", "PYTHON", "BANANA", "ORANGE", "CHERRY"};
+    const int NUM_WORDS = sizeof(words) / sizeof(string);
+    string selectedWord = words[rand() % NUM_WORDS];
+    string jumbledWord = selectedWord;
+    random_shuffle(jumbledWord.begin(), jumbledWord.end()); // shuffle the letters of the word
+
+    int numGuesses = 0;
+    string guess;
+
+    cout << "Welcome to Word Jumble! Unscramble the letters to make a word. You have " << MAX_GUESSES << " tries.\n";
+    cout << "The jumbled word is: " << jumbledWord << endl;
+
+    // main loop
+    do {
+        cout << "\nEnter your guess: ";
+        cin >> guess;
+        numGuesses++;
+
+        if (guess == selectedWord) {
+            cout << "Congratulations, you guessed it in " << numGuesses << " tries!\n";
+            return 0;
+        } else {
+            cout << "Sorry, that's not it.\n";
+        }
+    } while (numGuesses < MAX_GUESSES);
+
+    // game over
+    cout << "Sorry, you ran out of guesses. The word was " << selectedWord << endl;
+
+    return 0;
+}
